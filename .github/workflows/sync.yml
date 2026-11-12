@@ -1,0 +1,82 @@
+name: Sync site from Google Sites
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/sync.yml
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download pages from Google Sites and build the site
+        run: |
+          python3 - <<'PY'
+          import urllib.request, html.parser, re
+
+          BASE = "https://sites.google.com/view/ashfaqmahmudkhan"
+          PAGES = [
+              ("home", "index.html", "Home"),
+              ("research", "research.html", "Research"),
+              ("explainable-ml", "explainable-ml.html", "Explainable ML"),
+              ("methods-facilities", "methods-facilities.html", "Methods &amp; Facilities"),
+              ("publications", "publications.html", "Publications"),
+          ]
+          NAVCSS = ("<style>.gnav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);"
+                    "backdrop-filter:blur(8px);border-bottom:1px solid #e3eaf3;font-family:Inter,system-ui,sans-serif}"
+                    ".gnav .w{max-width:1180px;margin:auto;padding:12px 32px;display:flex;align-items:center;"
+                    "justify-content:space-between;gap:16px;flex-wrap:wrap}.gnav .b{font-weight:800;font-size:17px;"
+                    "color:#0a1f3d;text-decoration:none}.gnav .l{display:flex;gap:4px;flex-wrap:wrap}"
+                    ".gnav .l a{font-size:14px;font-weight:600;color:#5a6b86;text-decoration:none;padding:8px 12px;"
+                    "border-radius:10px}.gnav .l a:hover{background:#f0f4fa;color:#0a1f3d}"
+                    ".gnav .l a.on{color:#ff6a2a;background:#fff3ec}@media(max-width:700px){.gnav .w{padding:10px 16px}"
+                    ".gnav .l a{padding:6px 8px;font-size:13px}}</style>")
+          DESC = ('<meta name="description" content="Ashfaq Mahmud Khan, mechanical engineer: two-phase heat '
+                  'transfer, CFD, explainable machine learning and thermal design.">')
+
+          class P(html.parser.HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.codes = []
+              def handle_starttag(self, tag, attrs):
+                  for k, v in attrs:
+                      if k == "data-code" and v:
+                          self.codes.append(v)
+
+          for slug, fname, label in PAGES:
+              req = urllib.request.Request(BASE + "/" + slug, headers={"User-Agent": "Mozilla/5.0"})
+              page = urllib.request.urlopen(req, timeout=60).read().decode("utf-8")
+              p = P(); p.feed(page)
+              if not p.codes:
+                  raise SystemExit("No embed found on " + slug)
+              s = p.codes[0]
+              for sl, f, _ in PAGES:
+                  s = s.replace(BASE + "/" + sl, f)
+              s = s.replace(BASE + '"', 'index.html"')
+              s = s.replace(' target="_top"', "").replace('target="_top"', "")
+              links = "".join('<a href="%s"%s>%s</a>' % (f, ' class="on"' if f == fname else "", l)
+                              for _, f, l in PAGES)
+              nav = ('<nav class="gnav"><div class="w"><a class="b" href="index.html">Ashfaq Mahmud Khan</a>'
+                     '<div class="l">' + links + '</div></div></nav>')
+              title = ("Ashfaq Mahmud Khan | Thermal-fluid research" if slug == "home"
+                       else label.replace("&amp;", "&") + " | Ashfaq Mahmud Khan")
+              s = s.replace("</head>", "<title>" + title + "</title>" + DESC + NAVCSS + "</head>", 1)
+              s = re.sub(r"<body([^>]*)>", lambda m: "<body" + m.group(1) + ">" + nav, s, count=1)
+              open(fname, "w", encoding="utf-8").write(s)
+              print(fname, len(s))
+          open(".nojekyll", "w").write("")
+          PY
+
+      - name: Commit the updated pages
+        run: |
+          git config user.name "site-sync-bot"
+          git config user.email "site-sync-bot@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Sync pages from Google Sites"
+          git push
