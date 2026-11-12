@@ -35,7 +35,7 @@ jobs:
                     "color:#0a1f3d;text-decoration:none}.gnav .l{display:flex;gap:4px;flex-wrap:wrap}"
                     ".gnav .l a{font-size:14px;font-weight:600;color:#5a6b86;text-decoration:none;padding:8px 12px;"
                     "border-radius:10px}.gnav .l a:hover{background:#f0f4fa;color:#0a1f3d}"
-                    ".gnav .l a.on{color:#ff6a2a;background:#fff3ec}.gnav .cv{font-size:14px;font-weight:700;color:#fff;background:linear-gradient(90deg,#ff6a2a,#ff9a3c);text-decoration:none;padding:9px 16px;border-radius:999px;box-shadow:0 4px 14px rgba(255,106,42,.35);white-space:nowrap}.gnav .cv:hover{filter:brightness(1.08)}a.btn[href$='CV_ASHFAQ_MAHMUD_KHAN.pdf']{background:linear-gradient(90deg,#ff6a2a,#ff9a3c)!important;color:#fff!important;border-color:transparent!important}@media(max-width:700px){.gnav .w{padding:10px 16px}"
+                    ".gnav .l a.on{color:#ff6a2a;background:#fff3ec}.gnav .cv{font-size:14px;font-weight:700;color:#fff;background:linear-gradient(90deg,#ff6a2a,#ff9a3c);text-decoration:none;padding:9px 16px;border-radius:999px;box-shadow:0 4px 14px rgba(255,106,42,.35);white-space:nowrap}.gnav .cv:hover{filter:brightness(1.08)}a.btn[href$='CV_ASHFAQ_MAHMUD_KHAN.pdf']{display:none!important}@media(max-width:700px){.gnav .w{padding:10px 16px}"
                     ".gnav .l a{padding:6px 8px;font-size:13px}}</style>")
           DESC = ('<meta name="description" content="Ashfaq Mahmud Khan, mechanical engineer: two-phase heat '
                   'transfer, CFD, explainable machine learning and thermal design.">')
