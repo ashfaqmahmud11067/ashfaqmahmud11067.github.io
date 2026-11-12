@@ -24,9 +24,9 @@ jobs:
           PAGES = [
               ("home", "index.html", "Home"),
               ("research", "research.html", "Research"),
+              ("publications", "publications.html", "Publications"),
               ("explainable-ml", "explainable-ml.html", "Explainable ML"),
               ("methods-facilities", "methods-facilities.html", "Methods &amp; Facilities"),
-              ("publications", "publications.html", "Publications"),
           ]
           NAVCSS = ("<style>.gnav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);"
                     "backdrop-filter:blur(8px);border-bottom:1px solid #e3eaf3;font-family:Inter,system-ui,sans-serif}"
