@@ -60,6 +60,7 @@ jobs:
                   s = s.replace(BASE + "/" + sl, f)
               s = s.replace(BASE + '"', 'index.html"')
               s = s.replace(' target="_top"', "").replace('target="_top"', "")
+              s = s.replace('data-src="photo"', 'src="profile.webp"')
               links = "".join('<a href="%s"%s>%s</a>' % (f, ' class="on"' if f == fname else "", l)
                               for _, f, l in PAGES)
               nav = ('<nav class="gnav"><div class="w"><a class="b" href="index.html">Ashfaq Mahmud Khan</a>'
